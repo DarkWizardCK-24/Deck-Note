@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "190984185869",
+    "project_id": "deck-note",
+    "storage_bucket": "deck-note.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190984185869:android:a20955d6339801a263cd44",
+        "android_client_info": {
+          "package_name": "com.example.deck_note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190984185869-k4rklpin80fko93qpm9aheod9692f6r4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWIFNAWr1mTijsWZT7fPSsAMRkNjhzndQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190984185869-k4rklpin80fko93qpm9aheod9692f6r4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "190984185869-tukk8mo7mrdstrj33fvgnnk6eutqjgb4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.deckNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
