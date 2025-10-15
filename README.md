@@ -24,7 +24,7 @@ DeckNote is a beautiful and modern to-do app built with Flutter 🦋, designed t
 6. Card Swiper 🃏: Package for swipeable card interface.
 
 
-Crafted with 💼 by DarkWizardCK
-
-
 DeckNote 📝 - Swipe your tasks, stay productive, and enjoy the journey! 🚀
+
+
+Crafted with 💼 by DarkWizardCK
