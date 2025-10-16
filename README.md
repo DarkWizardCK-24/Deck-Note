@@ -16,7 +16,7 @@ DeckNote is a beautiful and modern to-do app built with Flutter 🦋, designed t
 
 # 🛠️ Tech Stack
 
-1. Flutter : Cross-platform framework for building the UI.
+1. Flutter 🦋: Cross-platform framework for building the UI.
 2. Firebase Authentication 🔥: Secure user authentication.
 3. Firebase Firestore 📊: Real-time database for task storage and sync.
 4. Glassmorphism 🪞: UI package for glassmorphic design.
