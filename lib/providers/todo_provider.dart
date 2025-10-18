@@ -1,52 +1,43 @@
 import 'package:deck_note/models/todo_model.dart';
 import 'package:deck_note/services/todo_service.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-class TodoProvider extends ChangeNotifier {
+class TodoProvider with ChangeNotifier {
   final TodoService _todoService = TodoService();
+
   List<TodoModel> _todos = [];
   List<TodoModel> _completedTodos = [];
   bool _isLoading = false;
-  String? _errorMessage;
-
-  StreamSubscription? _todosSubscription;
-  StreamSubscription? _completedTodosSubscription;
+  String? _error;
 
   List<TodoModel> get todos => _todos;
   List<TodoModel> get completedTodos => _completedTodos;
   bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  String? get error => _error;
 
   void listenToTodos(String userId) {
-    
-    // Cancel existing subscription if any
-    _todosSubscription?.cancel();
-    
-    _todosSubscription = _todoService.getTodosStream(userId).listen(
+    _todoService.getTodosStream(userId).listen(
       (todos) {
         _todos = todos;
+        _error = null;
         notifyListeners();
       },
       onError: (error) {
-        _errorMessage = error.toString();
+        _error = error.toString();
         notifyListeners();
       },
     );
   }
 
   void listenToCompletedTodos(String userId) {
-    
-    // Cancel existing subscription if any
-    _completedTodosSubscription?.cancel();
-    
-    _completedTodosSubscription = _todoService.getCompletedTodosStream(userId).listen(
+    _todoService.getCompletedTodosStream(userId).listen(
       (todos) {
         _completedTodos = todos;
+        _error = null;
         notifyListeners();
       },
       onError: (error) {
-        _errorMessage = error.toString();
+        _error = error.toString();
         notifyListeners();
       },
     );
@@ -57,23 +48,26 @@ class TodoProvider extends ChangeNotifier {
     required String title,
     required String description,
     required Priority priority,
+    List<ChecklistItem>? checklist,
   }) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       await _todoService.createTodo(
         userId: userId,
         title: title,
         description: description,
         priority: priority,
+        checklist: checklist,
       );
+
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _error = e.toString();
       _isLoading = false;
       notifyListeners();
       return false;
@@ -82,10 +76,29 @@ class TodoProvider extends ChangeNotifier {
 
   Future<bool> updateTodo(TodoModel todo) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       await _todoService.updateTodo(todo);
+
+      _isLoading = false;
+      notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateChecklistItems(String taskId, List<ChecklistItem> checklist) async {
+    try {
+      await _todoService.updateChecklistItem(taskId, checklist);
+      return true;
+    } catch (e) {
+      _error = e.toString();
       notifyListeners();
       return false;
     }
@@ -93,10 +106,18 @@ class TodoProvider extends ChangeNotifier {
 
   Future<bool> completeTodo(String taskId) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       await _todoService.completeTodo(taskId);
+
+      _isLoading = false;
+      notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _error = e.toString();
+      _isLoading = false;
       notifyListeners();
       return false;
     }
@@ -104,10 +125,18 @@ class TodoProvider extends ChangeNotifier {
 
   Future<bool> markAsIncomplete(String taskId) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       await _todoService.markAsIncomplete(taskId);
+
+      _isLoading = false;
+      notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _error = e.toString();
+      _isLoading = false;
       notifyListeners();
       return false;
     }
@@ -115,24 +144,25 @@ class TodoProvider extends ChangeNotifier {
 
   Future<bool> deleteTodo(String taskId) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       await _todoService.deleteTodo(taskId);
+
+      _isLoading = false;
+      notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _error = e.toString();
+      _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
   void clearError() {
-    _errorMessage = null;
+    _error = null;
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _todosSubscription?.cancel();
-    _completedTodosSubscription?.cancel();
-    super.dispose();
   }
 }
