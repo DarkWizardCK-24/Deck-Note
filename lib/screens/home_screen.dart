@@ -102,9 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: AppTheme.cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             FaIcon(
@@ -113,10 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
               size: 24,
             ),
             SizedBox(width: 10),
-            Text(
-              'Delete Task',
-              style: TextStyle(color: Colors.white),
-            ),
+            Text('Delete Task', style: TextStyle(color: Colors.white)),
           ],
         ),
         content: Text(
@@ -126,17 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: Text('Cancel', style: TextStyle(color: Colors.white70)),
           ),
           ElevatedButton(
             onPressed: () async {
               final todoProvider = context.read<TodoProvider>();
               await todoProvider.deleteTodo(todo.taskId);
               Navigator.of(dialogContext).pop();
-              
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Row(
@@ -188,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                       // Show error if any
-                      if (todoProvider.errorMessage != null) {
+                      if (todoProvider.error != null) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -211,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 40),
                                 child: Text(
-                                  todoProvider.errorMessage!,
+                                  todoProvider.error!,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.white70,
@@ -241,31 +233,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 cardsCount: todoProvider.todos.length,
                                 numberOfCardsDisplayed:
                                     todoProvider.todos.length > 3
-                                        ? 3
-                                        : todoProvider.todos.length,
+                                    ? 3
+                                    : todoProvider.todos.length,
                                 backCardOffset: const Offset(0, 50),
                                 padding: const EdgeInsets.all(0),
-                                scale: 0.9, // Makes back cards smaller for better visibility
+                                scale:
+                                    0.9, // Makes back cards smaller for better visibility
                                 cardBuilder:
                                     (
-                                  context,
-                                  index,
-                                  percentThresholdX,
-                                  percentThresholdY,
-                                ) {
-                                  print(
-                                    'HomeScreen: Building card at index $index',
-                                  );
-                                  return TodoCard(
-                                    todo: todoProvider.todos[index],
-                                  );
-                                },
+                                      context,
+                                      index,
+                                      percentThresholdX,
+                                      percentThresholdY,
+                                    ) {
+                                      print(
+                                        'HomeScreen: Building card at index $index',
+                                      );
+                                      return TodoCard(
+                                        todo: todoProvider.todos[index],
+                                      );
+                                    },
                                 onSwipe: _onSwipe,
                                 allowedSwipeDirection:
                                     const AllowedSwipeDirection.only(
-                                  left: true,
-                                  right: true,
-                                ),
+                                      left: true,
+                                      right: true,
+                                    ),
                               ),
                             ),
                           ),
@@ -305,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'DeckNote',
+                'DecXNote',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -333,7 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const CompletedTodosScreen(),
+                              builder: (context) =>
+                                  const CompletedTodosScreen(),
                             ),
                           );
                         },

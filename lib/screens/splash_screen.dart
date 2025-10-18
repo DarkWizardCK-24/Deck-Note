@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(height: 30),
 
               Text(
-                    'DeckNote',
+                    'DecXNote',
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
