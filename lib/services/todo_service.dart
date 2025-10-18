@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/todo_model.dart';
+import 'package:deck_note/models/todo_model.dart';
 
 class TodoService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,6 +27,7 @@ class TodoService {
     required String title,
     required String description,
     required Priority priority,
+    List<ChecklistItem>? checklist,
   }) async {
     try {
       final taskId = await _generateTaskId();
@@ -42,6 +43,7 @@ class TodoService {
         priority: priority,
         createdAt: DateTime.now(),
         colorIndex: colorIndex,
+        checklist: checklist ?? [],
       );
 
       final todoMap = todo.toMap();
@@ -114,6 +116,17 @@ class TodoService {
           .collection('todos')
           .doc(todo.taskId)
           .update(updatedTodo.toMap());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateChecklistItem(String taskId, List<ChecklistItem> checklist) async {
+    try {
+      await _firestore.collection('todos').doc(taskId).update({
+        'checklist': checklist.map((item) => item.toMap()).toList(),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
     } catch (e) {
       rethrow;
     }
