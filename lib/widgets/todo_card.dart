@@ -1,10 +1,12 @@
 import 'package:deck_note/models/todo_model.dart';
+import 'package:deck_note/providers/todo_provider.dart';
 import 'package:deck_note/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:provider/provider.dart';
 import 'edit_todo_dialog.dart';
 
 class TodoCard extends StatelessWidget {
@@ -31,6 +33,51 @@ class TodoCard extends StatelessWidget {
         return FontAwesomeIcons.circleInfo;
       case Priority.low:
         return FontAwesomeIcons.circleMinus;
+    }
+  }
+
+  Future<void> _toggleChecklistItem(
+    BuildContext context,
+    ChecklistItem item,
+  ) async {
+    final todoProvider = context.read<TodoProvider>();
+
+    // Toggle the item
+    final updatedChecklist = todo.checklist.map((i) {
+      if (i.id == item.id) {
+        return i.copyWith(isCompleted: !i.isCompleted);
+      }
+      return i;
+    }).toList();
+
+    // Update the checklist
+    await todoProvider.updateChecklistItems(todo.taskId, updatedChecklist);
+
+    // Check if all items are completed
+    final allCompleted = updatedChecklist.every((i) => i.isCompleted);
+
+    // If all checklist items are completed and there are checklist items, mark todo as complete
+    if (allCompleted && updatedChecklist.isNotEmpty) {
+      await todoProvider.completeTodo(todo.taskId);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                FaIcon(FontAwesomeIcons.trophy, color: Colors.white),
+                SizedBox(width: 10),
+                Text('All tasks completed! 🎉'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -166,20 +213,139 @@ class TodoCard extends StatelessWidget {
                     SizedBox(height: 15),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Text(
-                          todo.description,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white.withOpacity(0.85),
-                            height: 1.5,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 8,
-                                color: Colors.black.withOpacity(0.2),
-                                offset: Offset(0, 1),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              todo.description,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white.withOpacity(0.85),
+                                height: 1.5,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 8,
+                                    color: Colors.black.withOpacity(0.2),
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (todo.checklist.isNotEmpty) ...[
+                              SizedBox(height: 20),
+                              Container(
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        FaIcon(
+                                          FontAwesomeIcons.listCheck,
+                                          size: 16,
+                                          color: Colors.white70,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Checklist',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          '${todo.checklist.where((i) => i.isCompleted).length}/${todo.checklist.length}',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 12),
+                                    ...todo.checklist.map((item) {
+                                      return GestureDetector(
+                                        onTap: () =>
+                                            _toggleChecklistItem(context, item),
+                                        child: Container(
+                                          margin: EdgeInsets.only(bottom: 8),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: item.isCompleted
+                                                ? Colors.green.withOpacity(0.1)
+                                                : Colors.white.withOpacity(
+                                                    0.05,
+                                                  ),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 20,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                  color: item.isCompleted
+                                                      ? Colors.green
+                                                      : Colors.transparent,
+                                                  border: Border.all(
+                                                    color: item.isCompleted
+                                                        ? Colors.green
+                                                        : Colors.white60,
+                                                    width: 2,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                child: item.isCompleted
+                                                    ? Icon(
+                                                        Icons.check,
+                                                        size: 14,
+                                                        color: Colors.white,
+                                                      )
+                                                    : null,
+                                              ),
+                                              SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  item.text,
+                                                  style: TextStyle(
+                                                    color: item.isCompleted
+                                                        ? Colors.white60
+                                                        : Colors.white,
+                                                    fontSize: 14,
+                                                    decoration: item.isCompleted
+                                                        ? TextDecoration
+                                                              .lineThrough
+                                                        : TextDecoration.none,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ],
+                                ),
                               ),
                             ],
-                          ),
+                          ],
                         ),
                       ),
                     ),
