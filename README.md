@@ -11,7 +11,7 @@ DeckNote is a beautiful and modern to-do app built with Flutter 🦋, designed t
 5. Task Management ✅: Create, edit, delete, and categorize tasks with ease.
 6. Cross-Platform Support 🌐: Runs smoothly on Android, iOS, and web platforms.
 7. Animations & Transitions 🎉: Smooth animations for swiping, task completion, and UI interactions.
-8. Offline Support 📴: Manage tasks offline with automatic syncing when online.
+8. Checklist Items 📋: Add and manage checklist items within tasks for better organization and simplification.
 
 
 # 🛠️ Tech Stack
